@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="start()">Start!</button><br />
+    <div id="div"></div>
+    <video id="v" autoplay></video>
+    <script>
+      var config = { video: { width: 320 /*320-640-1280*/ } };
+
+      var start = () =>
+        navigator.mediaDevices
+          .getUserMedia(config)
+          .then((stream) => (v.srcObject = stream))
+          .then(() => new Promise((resolve) => (v.onloadedmetadata = resolve)))
+          .then(() => log("Success: " + v.videoWidth + "x" + v.videoHeight))
+          .catch(log);
+
+      var log = (msg) => (div.innerHTML += "<p>" + msg + "</p>");
+    </script>
+  </body>
+</html>

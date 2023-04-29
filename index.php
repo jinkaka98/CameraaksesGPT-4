@@ -15,6 +15,19 @@
             background-color: rgba(0, 0, 0, 0.8);
             z-index: 100;
         }
+        #open-popup {
+            margin: 30% auto;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
         #popup-content {
             position: absolute;
             top: 50%;
@@ -23,6 +36,28 @@
             background-color: white;
             padding: 20px;
             border-radius: 5px;
+            max-width: 90%;
+
+        }
+        #video, #canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        #snap {
+            display: block;
+            margin: 10px auto;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            #popup-content {
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -30,9 +65,9 @@
     <button id="open-popup">Buka Kamera</button>
     <div id="popup">
         <div id="popup-content">
-            <video id="video" width="640" height="480" autoplay></video>
+            <video id="video" autoplay></video>
             <button id="snap">Take a Picture</button>
-            <canvas id="canvas" width="640" height="480"></canvas>
+            <canvas id="canvas"></canvas>
             <script>
                 const video = document.getElementById('video');
                 const canvas = document.getElementById('canvas');
@@ -42,13 +77,17 @@
                 navigator.mediaDevices.getUserMedia({video: true})
                     .then(stream => {
                         video.srcObject = stream;
+                        video.addEventListener('loadedmetadata', () => {
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                        });
                     })
                     .catch(err => {
                         console.error('An error occurred: ', err);
                     });
 
                 snapButton.addEventListener('click', () => {
-                    context.drawImage(video, 0, 0, 640, 480);
+                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
                     let imgData = canvas.toDataURL('image/png');
                     let xhr = new XMLHttpRequest();
                     xhr.open('POST', 'save_image.php', true);
